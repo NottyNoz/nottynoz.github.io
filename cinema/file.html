@@ -9,17 +9,18 @@
 	var id = urlParams.get("v");
 
     var player = videojs("vjsplayer");
-	var player_ready = false;
 	var volume = parseFloat(urlParams.get("vol"));
 	var seek = parseFloat(urlParams.get("seek"));
+
+	var time;
+	var current_time = () => (Date.now()/1000 - time);
     
 	function think(){
-        seek += .1;
-		if (player_ready){
+		if (player.readyState() >= 2){
 			document.title = "Loaded";
-			if (player.duration() > 0){
-				if (Math.abs(player.currentTime() - seek) > 2){
-                    player.currentTime(seek);
+			if (player.duration() > 0 && !player.ended()){
+				if (Math.abs(player.currentTime() - current_time()) > 2){
+                    player.currentTime(current_time());
 				}
 			}
 		}
@@ -37,14 +38,15 @@
     
     window.onwheel = function(e){
     	seek = Math.round(e.wheelDelta * .6)/100; // weird error of 166.66%
-        player.currentTime(seek);
+		time -= seek - current_time();
+        player.currentTime(current_time());
     };
     
     if (id.indexOf(".m3u8") != -1) player.src({type: "application/x-mpegURL", src: id});
 	else player.src({type: "video/mp4", src: id});
 	player.play();
+	time = Date.now()/1000 - seek;
 	player.volume(volume/100);
 	player.currentTime(seek);
-	player_ready = true;
 </script>
 </html>
