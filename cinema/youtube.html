@@ -57,6 +57,7 @@
 				var s = (videoAspectRatio * 100) / windowAspectRatio;
 			}
 			else if (videoAspectRatio > windowAspectRatio){
+				if (videoAspectRatio > 1) videoAspectRatio = 1;
 				var s = videoAspectRatio * 100;
 			}
 			player.g.style.width = s + "%";
