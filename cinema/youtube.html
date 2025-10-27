@@ -30,7 +30,7 @@
 			},
 			playerVars: {
 				autoplay: 1,
-				mute: 0,
+				mute: 1, // autoplay is allowed while muted
 				controls: 0,
 				cc_load_policy: 0,
 				disablekb: 1,
@@ -48,34 +48,32 @@
 		player.setVolume(volume);
 		player.seekTo(seek);
 		function think(){
-			var videoAspectRatio = (player.playerInfo.videoContentRect.width/player.playerInfo.videoContentRect.height);
-			var windowAspectRatio = (outerWidth/outerHeight);
-			
-			// the fruit of my obsession with creating a seamless viewing experience
-			// set the youtube embed iframe height so high that the top and bottom aren't visible then adjust the video to fit in the center
-			if (videoAspectRatio <= windowAspectRatio){
-				var s = (videoAspectRatio * 100) / windowAspectRatio;
-			}
-			else if (videoAspectRatio > windowAspectRatio){
-				if (videoAspectRatio > 1) videoAspectRatio = 1;
-				var s = videoAspectRatio * 100;
-			}
-			player.g.style.width = s + "%";
-			if (s < 100) player.g.style.left = (100 - s)/2 + "%";
-
-
 			if (player.getPlayerState() == 2 || player.getPlayerState() == 5 || player.getPlayerState() == -1){
 				player.playVideo();
 			}
 			if (player.getPlayerState() == 1){
-				document.title = "Loaded";
+				var videoAspectRatio = (player.playerInfo.videoContentRect.width/player.playerInfo.videoContentRect.height);
+				var windowAspectRatio = (outerWidth/outerHeight);
+				
+				// the fruit of my obsession with creating a seamless viewing experience
+				// set the youtube embed iframe height so high that the top and bottom aren't visible then adjust the video to fit in the center
+				if (videoAspectRatio <= windowAspectRatio){
+					var s = (videoAspectRatio * 100) / windowAspectRatio;
+				}
+				else if (videoAspectRatio > windowAspectRatio){
+					if (videoAspectRatio > 1) videoAspectRatio = 1;
+					var s = videoAspectRatio * 100;
+				}
+				player.g.style.width = s + "%";
+				if (s < 100) player.g.style.left = (100 - s)/2 + "%";
 			}
 		}
 		setInterval(think, 50);
 	}
 
 	window.onkeydown = function(e){
-	    var code = e.keyCode ? e.keyCode : e.which;
+		var code = e.keyCode ? e.keyCode : e.which;
+		if (volume > 0) player.unMute();
 
 		if (code >= 240 && code <= 340){ // 0xF0
 			volume = code - 240;

@@ -51,7 +51,6 @@
 		
 		widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(e){
 			player_ready = true;
-			document.title = "Loaded";
 			
 			widget.getVolume(function(s){
 				widget.setVolume(volume);

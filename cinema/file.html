@@ -17,7 +17,6 @@
     
 	function think(){
 		if (player.readyState() >= 2){
-			document.title = "Loaded";
 			if (player.duration() > 0 && !player.ended()){
 				if (Math.abs(player.currentTime() - current_time()) > 2){
                     player.currentTime(current_time());
