@@ -7,42 +7,57 @@
 <script>
 	const urlParams = new URLSearchParams(window.location.search);
 	var id = urlParams.get("v");
+	var subs = urlParams.get("subs");
 
-    var player = videojs("vjsplayer");
+	var player = videojs("vjsplayer");
 	var volume = parseFloat(urlParams.get("vol"));
 	var seek = parseFloat(urlParams.get("seek"));
 
 	var time;
 	var current_time = () => (Date.now()/1000 - time);
-    
+	
 	function think(){
 		if (player.readyState() >= 2){
 			if (player.duration() > 0 && !player.ended()){
 				if (Math.abs(player.currentTime() - current_time()) > 2){
-                    player.currentTime(current_time());
+					player.currentTime(current_time());
 				}
 			}
 		}
 	}
 	setInterval(think, 100);
-    
-    window.onkeydown = function(e){
-        var code = e.keyCode ? e.keyCode : e.which;
-        
-    	if (code >= 240 && code <= 340){ // 0xF0
-    		volume = code - 240;
+	
+	window.onkeydown = function(e){
+		var code = e.keyCode ? e.keyCode : e.which;
+		
+		if (code >= 240 && code <= 340){ // 0xF0
+			volume = code - 240;
 			player.volume(volume/100);
-    	}
-    };
-    
-    window.onwheel = function(e){
-    	seek = Math.round(e.wheelDelta * .6)/100; // weird error of 166.66%
+		}
+	};
+	
+	window.onwheel = function(e){
+		seek = Math.round(e.wheelDelta * .6)/100; // weird error of 166.66%
 		time -= seek - current_time();
-        player.currentTime(current_time());
-    };
-    
-    if (id.indexOf(".m3u8") != -1) player.src({type: "application/x-mpegURL", src: id});
+		player.currentTime(current_time());
+	};
+
+
+	if (id.indexOf(".m3u8") != -1) player.src({type: "application/x-mpegURL", src: id});
 	else player.src({type: "video/mp4", src: id});
+
+	if (subs){
+		player.addRemoteTextTrack({src: subs}, false);
+		if (player.textTracks().length) player.textTracks()[player.textTracks().length-1].mode = "showing";
+
+		// https://docs.videojs.com/tracks_text-track-settings.js
+		player.textTrackSettings.setValues({
+			backgroundOpacity: '0',
+			edgeStyle: 'uniform',
+		});
+		player.textTrackSettings.updateDisplay();
+	}
+
 	player.play();
 	time = Date.now()/1000 - seek;
 	player.volume(volume/100);
