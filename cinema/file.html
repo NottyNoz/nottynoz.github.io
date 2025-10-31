@@ -43,8 +43,7 @@
 	};
 
 
-	if (id.indexOf(".m3u8") != -1) player.src({type: "application/x-mpegURL", src: id});
-	else player.src({type: "video/mp4", src: id});
+	player.src({src: id});
 
 	if (subs){
 		player.addRemoteTextTrack({src: subs}, false);

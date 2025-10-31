@@ -7,19 +7,23 @@
 	var id = urlParams.get("v");
 
 	var player = videojs("vjsplayer");
-	
+
 	var json = new Object();
 	function think(){
 		if (player.error()) document.title = "failure";
 		if (player.readyState() >= 2){
+			if (player.videoWidth() == 0 || player.videoHeight() == 0){
+				document.title = "failure";
+				return;
+			}
 			json.duration = player.duration();
+			if (json.duration == Infinity) json.duration = 0;
 			document.title = JSON.stringify(json);
 		}
 	}
 	setInterval(think, 100);
-	
-	if (id.indexOf(".m3u8") != -1) player.src({type: "application/x-mpegURL", src: id});
-	else player.src({type: "video/mp4", src: id});
+
+	player.src({src: id});
 	player.play();
 	player.volume(0);
 </script>
