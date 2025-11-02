@@ -1,5 +1,7 @@
 <html>
+<title>SoundCloud</title>
 <input style="position:absolute;opacity:0;"></input>
+<link rel="preconnect" href="https://w.soundcloud.com" crossorigin>
 <link rel="preconnect" href="https://api-widget.soundcloud.com" crossorigin>
 <link rel="preconnect" href="https://soundcloud.com" crossorigin>
 <body style="margin:0px;background-color:black;overflow:hidden;">
@@ -30,7 +32,8 @@
 	const trapInput = document.querySelector("input");
 	setInterval(function(){if(player_ready)trapInput.focus()}, 10); // required to recapture key inputs for onkeydown
 
-	if (url != ""){
+	var json = new Object();
+	if (url){
 		var player = document.getElementById("player");
 		player.src = "https://w.soundcloud.com/player/?auto_play=true&hide_related=true&show_comments=false&show_reposts=false&show_teaser=false&sharing=false&liking=false&download=false&visual=true&show_artwork=true&url=" + url;
 		widget = SC.Widget(player);
@@ -48,7 +51,10 @@
 		
 		widget.bind(SC.Widget.Events.PLAY_PROGRESS, function(e){
 			player_ready = true;
-			
+
+			json.buffered = e.loadedProgress;
+			document.title = JSON.stringify(json);
+
 			widget.getVolume(function(s){
 				widget.setVolume(volume);
 			});
@@ -71,6 +77,8 @@
 		
 	window.onwheel = function(e){
 		seek = Math.round(e.wheelDelta * .6)*10; // weird error of 166.66%
+		json.buffered = 0;
+		document.title = JSON.stringify(json);
 		time -= seek - current_time();
 	};
 </script>

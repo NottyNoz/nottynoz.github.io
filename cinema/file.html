@@ -16,6 +16,7 @@
 	var time;
 	var current_time = () => (Date.now()/1000 - time);
 	
+	var json = new Object();
 	function think(){
 		if (player.readyState() >= 2){
 			if (player.duration() > 0 && !player.ended()){
@@ -23,6 +24,8 @@
 					player.currentTime(current_time());
 				}
 			}
+			json.buffered = player.bufferedEnd()/player.duration();
+			document.title = JSON.stringify(json);
 		}
 	}
 	setInterval(think, 100);
@@ -39,6 +42,8 @@
 	window.onwheel = function(e){
 		seek = Math.round(e.wheelDelta * .6)/100; // weird error of 166.66%
 		time -= seek - current_time();
+		json.buffered = 0;
+		document.title = JSON.stringify(json);
 		player.currentTime(current_time());
 	};
 
