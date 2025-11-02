@@ -19,7 +19,7 @@
 	var json = new Object();
 	function think(){
 		if (player.readyState() >= 2){
-			if (player.duration() > 0 && !player.ended()){
+			if (player.duration() != Infinity && !player.ended()){
 				if (Math.abs(player.currentTime() - current_time()) > 2){
 					player.currentTime(current_time());
 				}
@@ -65,6 +65,6 @@
 	player.play();
 	time = Date.now()/1000 - seek;
 	player.volume(volume/100);
-	player.currentTime(seek);
+	if (player.duration() != Infinity) player.currentTime(seek);
 </script>
 </html>
